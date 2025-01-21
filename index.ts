@@ -122,7 +122,6 @@ app.post("/api/test/start", async (req: Request, res: Response) => {
         .replace("```json", "")
         .replace("```", "")
     );
-    console.log(aiAnalysis);
   } finally {
     await browser.close();
     const endTime = new Date().toISOString();
