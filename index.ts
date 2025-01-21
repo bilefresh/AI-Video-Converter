@@ -43,7 +43,7 @@ app.post("/api/test/start", async (req: Request, res: Response) => {
   const steps: Step[] = [];
   const startTime = new Date().toISOString();
   let status: "SUCCESS" | "FAILED" = "FAILED";
-  let aiAnalysis: string | null = null;
+  let aiAnalysis: any | null = null;
 
   const browser = await chromium.launch();
   const page: Page = await browser.newPage();
@@ -116,7 +116,13 @@ app.post("/api/test/start", async (req: Request, res: Response) => {
     if (!aiResponse) {
       throw new Error("AI Response is null");
     }
-    aiAnalysis = JSON.parse(aiResponse.choices[0].message.content.trim());
+    aiAnalysis = JSON.parse(
+      aiResponse.choices[0].message.content
+        .trim()
+        .replace("```json", "")
+        .replace("```", "")
+    );
+    console.log(aiAnalysis);
   } finally {
     await browser.close();
     const endTime = new Date().toISOString();
@@ -129,7 +135,7 @@ app.post("/api/test/start", async (req: Request, res: Response) => {
         startTime,
         endTime,
         JSON.stringify(steps),
-        JSON.stringify(aiAnalysis),
+        JSON.stringify(aiAnalysis?.aiAnalysis),
       ]
     );
 
